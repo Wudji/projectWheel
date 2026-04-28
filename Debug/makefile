@@ -14,6 +14,9 @@ ORDERED_OBJS += \
 "./ti_msp_dl_config.o" \
 "./startup_mspm0g350x_ticlang.o" \
 "./Board/board.o" \
+"./KEY/app_key_task.o" \
+"./KEY/hw_key.o" \
+"./KEY/mid_button.o" \
 "./LCD_init/lcd.o" \
 "./LCD_init/lcd_init.o" \
 "./TB6612/tb6612.o" \
@@ -30,10 +33,12 @@ RMDIR := RMDIR /S/Q
 -include sources.mk
 -include subdir_vars.mk
 -include Board/subdir_vars.mk
+-include KEY/subdir_vars.mk
 -include LCD_init/subdir_vars.mk
 -include TB6612/subdir_vars.mk
 -include subdir_rules.mk
 -include Board/subdir_rules.mk
+-include KEY/subdir_rules.mk
 -include LCD_init/subdir_rules.mk
 -include TB6612/subdir_rules.mk
 -include objects.mk
@@ -146,8 +151,8 @@ empty.out: $(OBJS) $(GEN_CMDS)
 # Other Targets
 clean:
 	-$(RM) $(GEN_MISC_FILES__QUOTED)$(GEN_FILES__QUOTED)$(EXE_OUTPUTS__QUOTED)
-	-$(RM) "empty.o" "ti_msp_dl_config.o" "startup_mspm0g350x_ticlang.o" "Board\board.o" "LCD_init\lcd.o" "LCD_init\lcd_init.o" "TB6612\tb6612.o" 
-	-$(RM) "empty.d" "ti_msp_dl_config.d" "startup_mspm0g350x_ticlang.d" "Board\board.d" "LCD_init\lcd.d" "LCD_init\lcd_init.d" "TB6612\tb6612.d" 
+	-$(RM) "empty.o" "ti_msp_dl_config.o" "startup_mspm0g350x_ticlang.o" "Board\board.o" "KEY\app_key_task.o" "KEY\hw_key.o" "KEY\mid_button.o" "LCD_init\lcd.o" "LCD_init\lcd_init.o" "TB6612\tb6612.o" 
+	-$(RM) "empty.d" "ti_msp_dl_config.d" "startup_mspm0g350x_ticlang.d" "Board\board.d" "KEY\app_key_task.d" "KEY\hw_key.d" "KEY\mid_button.d" "LCD_init\lcd.d" "LCD_init\lcd_init.d" "TB6612\tb6612.d" 
 	-@echo ' '
 
 .PHONY: all clean dependents

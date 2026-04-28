@@ -37,6 +37,9 @@
 #include "lcd.h"
 #include "pic.h"
 #include "tb6612.h"
+#include "mid_button.h"
+#include "app_key_task.h"
+#include "hw_key.h"
 # define CIRCLE_DIG 407
 # define SLOW_PERCENTAGE 20.409 //电机减速比
 # define ENCODER 13
@@ -49,6 +52,11 @@ volatile uint16_t pulse;
 bool motor_direction = false;
 bool motor_flag=true;
 float n_speed;//电机转速
+uint8_t key1_num=0;
+uint8_t key2_num=0;
+uint8_t key3_num=0;
+uint8_t key4_num=0;
+uint32_t sys_time=0;
 
 int main(void)
 {
@@ -56,6 +64,7 @@ int main(void)
     SYSCFG_DL_init();
     LCD_Init(); // LCD初始化
     LCD_Fill(0, 0, LCD_W,LCD_H,WHITE);
+    user_button_init(); 
 
 
     /* 开启中断配置 */
@@ -63,11 +72,13 @@ int main(void)
     NVIC_EnableIRQ(MOTOR_STOP_INT_IRQN);
     NVIC_EnableIRQ(QEI_0_INST_INT_IRQN);
     NVIC_EnableIRQ(TIMER_0_INST_INT_IRQN);
+    NVIC_EnableIRQ(Button_INST_INT_IRQN);
 
     /* 打开定时器 */
     DL_TimerG_startCounter(PWM_MOTOR_INST);
     DL_TimerA_startCounter(TIMER_0_INST);
     DL_TimerG_startCounter(QEI_0_INST);
+    DL_TimerA_startCounter(Button_INST);
 
 
 
@@ -78,12 +89,12 @@ int main(void)
 
         if (motor_flag)
         {
-            MOTOR_Control(1,500);
+          //  MOTOR_Control(1,500);
         }
         else {
             MOTOR_STOP();
         }
-        
+
         // while (!ADC_flag)
         // {
         //     //等待信号
@@ -99,14 +110,16 @@ int main(void)
   
 
         /*显示*/
-        LCD_ShowString(0,20,(const u8 *)"DIG_V:",BLACK,background_color,12,0);
-        LCD_ShowIntNum(48,20,digital_voltage,4,BLACK,background_color,12);
-        LCD_ShowString(0,40,(const u8 *)"ANA_V:",BLACK,background_color,12,0);
-        LCD_ShowFloatNum1(48,40,analog_voltage,4,BLACK,background_color,12);
-        LCD_ShowString(0,60,(const u8 *)"ANGLE:",BLACK,background_color,12,0);
-        LCD_ShowFloatNum1(37, 60, angle, 5, BLACK, background_color, 12);
-
-
+        // LCD_ShowString(0,20,(const u8 *)"DIG_V:",BLACK,background_color,12,0);
+        // LCD_ShowIntNum(48,20,digital_voltage,4,BLACK,background_color,12);
+        // LCD_ShowString(0,40,(const u8 *)"ANA_V:",BLACK,background_color,12,0);
+        // LCD_ShowFloatNum1(48,40,analog_voltage,4,BLACK,background_color,12);
+        // LCD_ShowString(0,60,(const u8 *)"ANGLE:",BLACK,background_color,12,0);
+        // LCD_ShowFloatNum1(37, 60, angle, 5, BLACK, background_color, 12);
+        LCD_ShowIntNum(0, 0, key1_num, 3, BLACK, background_color, 12);
+        LCD_ShowIntNum(0, 20, key2_num, 3, BLACK, background_color, 12);        
+        LCD_ShowIntNum(0, 40, key3_num, 3, BLACK, background_color, 12);
+        LCD_ShowIntNum(0, 60, key4_num, 3, BLACK, background_color, 12);
         if (motor_direction)
         {
             LCD_ShowString(0, 80, "right", BLACK, background_color, 12, 0);
@@ -164,5 +177,16 @@ void TIMER_0_INST_IRQHandler(void)
 
         default:
             break;
+    }
+}
+void Button_INST_IRQHandler(void)
+{
+    switch (DL_TimerA_getPendingInterrupt(Button_INST)) {
+        case DL_TIMER_IIDX_LOAD:
+            flex_button_scan();
+        
+        default:
+            break;
+    
     }
 }

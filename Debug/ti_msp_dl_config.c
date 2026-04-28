@@ -42,6 +42,7 @@
 
 DL_TimerG_backupConfig gQEI_0Backup;
 DL_TimerA_backupConfig gTIMER_0Backup;
+DL_TimerA_backupConfig gButtonBackup;
 DL_SPI_backupConfig gSPI_LCDBackup;
 
 /*
@@ -57,6 +58,7 @@ SYSCONFIG_WEAK void SYSCFG_DL_init(void)
     SYSCFG_DL_PWM_MOTOR_init();
     SYSCFG_DL_QEI_0_init();
     SYSCFG_DL_TIMER_0_init();
+    SYSCFG_DL_Button_init();
     SYSCFG_DL_UART_0_init();
     SYSCFG_DL_SPI_LCD_init();
     SYSCFG_DL_ADC_voltage_init();
@@ -64,6 +66,7 @@ SYSCONFIG_WEAK void SYSCFG_DL_init(void)
 
 	gQEI_0Backup.backupRdy 	= false;
 	gTIMER_0Backup.backupRdy 	= false;
+	gButtonBackup.backupRdy 	= false;
 
 	gSPI_LCDBackup.backupRdy 	= false;
 
@@ -78,6 +81,7 @@ SYSCONFIG_WEAK bool SYSCFG_DL_saveConfiguration(void)
 
 	retStatus &= DL_TimerG_saveConfiguration(QEI_0_INST, &gQEI_0Backup);
 	retStatus &= DL_TimerA_saveConfiguration(TIMER_0_INST, &gTIMER_0Backup);
+	retStatus &= DL_TimerA_saveConfiguration(Button_INST, &gButtonBackup);
 	retStatus &= DL_SPI_saveConfiguration(SPI_LCD_INST, &gSPI_LCDBackup);
 
     return retStatus;
@@ -90,6 +94,7 @@ SYSCONFIG_WEAK bool SYSCFG_DL_restoreConfiguration(void)
 
 	retStatus &= DL_TimerG_restoreConfiguration(QEI_0_INST, &gQEI_0Backup, false);
 	retStatus &= DL_TimerA_restoreConfiguration(TIMER_0_INST, &gTIMER_0Backup, false);
+	retStatus &= DL_TimerA_restoreConfiguration(Button_INST, &gButtonBackup, false);
 	retStatus &= DL_SPI_restoreConfiguration(SPI_LCD_INST, &gSPI_LCDBackup);
 
     return retStatus;
@@ -102,6 +107,7 @@ SYSCONFIG_WEAK void SYSCFG_DL_initPower(void)
     DL_TimerG_reset(PWM_MOTOR_INST);
     DL_TimerG_reset(QEI_0_INST);
     DL_TimerA_reset(TIMER_0_INST);
+    DL_TimerA_reset(Button_INST);
     DL_UART_Main_reset(UART_0_INST);
     DL_SPI_reset(SPI_LCD_INST);
     DL_ADC12_reset(ADC_voltage_INST);
@@ -111,6 +117,7 @@ SYSCONFIG_WEAK void SYSCFG_DL_initPower(void)
     DL_TimerG_enablePower(PWM_MOTOR_INST);
     DL_TimerG_enablePower(QEI_0_INST);
     DL_TimerA_enablePower(TIMER_0_INST);
+    DL_TimerA_enablePower(Button_INST);
     DL_UART_Main_enablePower(UART_0_INST);
     DL_SPI_enablePower(SPI_LCD_INST);
     DL_ADC12_enablePower(ADC_voltage_INST);
@@ -154,9 +161,25 @@ SYSCONFIG_WEAK void SYSCFG_DL_GPIO_init(void)
 
     DL_GPIO_initDigitalOutput(MOTOR_AIN_2_IOMUX);
 
-    DL_GPIO_clearPins(MOTOR_PORT, MOTOR_AIN_1_PIN |
+    DL_GPIO_initDigitalInputFeatures(KEY_K0_IOMUX,
+		 DL_GPIO_INVERSION_DISABLE, DL_GPIO_RESISTOR_PULL_UP,
+		 DL_GPIO_HYSTERESIS_DISABLE, DL_GPIO_WAKEUP_DISABLE);
+
+    DL_GPIO_initDigitalInputFeatures(KEY_K1_IOMUX,
+		 DL_GPIO_INVERSION_DISABLE, DL_GPIO_RESISTOR_PULL_UP,
+		 DL_GPIO_HYSTERESIS_DISABLE, DL_GPIO_WAKEUP_DISABLE);
+
+    DL_GPIO_initDigitalInputFeatures(KEY_K2_IOMUX,
+		 DL_GPIO_INVERSION_DISABLE, DL_GPIO_RESISTOR_PULL_UP,
+		 DL_GPIO_HYSTERESIS_DISABLE, DL_GPIO_WAKEUP_DISABLE);
+
+    DL_GPIO_initDigitalInputFeatures(KEY_K3_IOMUX,
+		 DL_GPIO_INVERSION_DISABLE, DL_GPIO_RESISTOR_PULL_UP,
+		 DL_GPIO_HYSTERESIS_DISABLE, DL_GPIO_WAKEUP_DISABLE);
+
+    DL_GPIO_clearPins(GPIOA, MOTOR_AIN_1_PIN |
 		MOTOR_AIN_2_PIN);
-    DL_GPIO_enableOutput(MOTOR_PORT, MOTOR_AIN_1_PIN |
+    DL_GPIO_enableOutput(GPIOA, MOTOR_AIN_1_PIN |
 		MOTOR_AIN_2_PIN);
     DL_GPIO_clearPins(GPIOB, LCD_RES_PIN |
 		LCD_DC_PIN |
@@ -289,6 +312,43 @@ SYSCONFIG_WEAK void SYSCFG_DL_TIMER_0_init(void) {
         (DL_TimerA_TimerConfig *) &gTIMER_0TimerConfig);
     DL_TimerA_enableInterrupt(TIMER_0_INST , DL_TIMERA_INTERRUPT_LOAD_EVENT);
     DL_TimerA_enableClock(TIMER_0_INST);
+
+
+
+
+
+}
+
+/*
+ * Timer clock configuration to be sourced by BUSCLK /  (4000000 Hz)
+ * timerClkFreq = (timerClkSrc / (timerClkDivRatio * (timerClkPrescale + 1)))
+ *   1000000 Hz = 4000000 Hz / (8 * (3 + 1))
+ */
+static const DL_TimerA_ClockConfig gButtonClockConfig = {
+    .clockSel    = DL_TIMER_CLOCK_BUSCLK,
+    .divideRatio = DL_TIMER_CLOCK_DIVIDE_8,
+    .prescale    = 3U,
+};
+
+/*
+ * Timer load value (where the counter starts from) is calculated as (timerPeriod * timerClockFreq) - 1
+ * Button_INST_LOAD_VALUE = (20 ms * 1000000 Hz) - 1
+ */
+static const DL_TimerA_TimerConfig gButtonTimerConfig = {
+    .period     = Button_INST_LOAD_VALUE,
+    .timerMode  = DL_TIMER_TIMER_MODE_PERIODIC_UP,
+    .startTimer = DL_TIMER_START,
+};
+
+SYSCONFIG_WEAK void SYSCFG_DL_Button_init(void) {
+
+    DL_TimerA_setClockConfig(Button_INST,
+        (DL_TimerA_ClockConfig *) &gButtonClockConfig);
+
+    DL_TimerA_initTimerMode(Button_INST,
+        (DL_TimerA_TimerConfig *) &gButtonTimerConfig);
+    DL_TimerA_enableInterrupt(Button_INST , DL_TIMERA_INTERRUPT_LOAD_EVENT);
+    DL_TimerA_enableClock(Button_INST);
 
 
 

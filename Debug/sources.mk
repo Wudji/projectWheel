@@ -120,6 +120,7 @@ GEN_OPTS__QUOTED :=
 SUBDIRS := \
 . \
 Board \
+KEY \
 LCD_init \
 TB6612 \
 

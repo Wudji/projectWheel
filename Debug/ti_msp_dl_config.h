@@ -113,6 +113,11 @@ extern "C" {
 #define TIMER_0_INST_IRQHandler                                 TIMA0_IRQHandler
 #define TIMER_0_INST_INT_IRQN                                   (TIMA0_INT_IRQn)
 #define TIMER_0_INST_LOAD_VALUE                                         (15624U)
+/* Defines for Button */
+#define Button_INST                                                      (TIMA1)
+#define Button_INST_IRQHandler                                  TIMA1_IRQHandler
+#define Button_INST_INT_IRQN                                    (TIMA1_INT_IRQn)
+#define Button_INST_LOAD_VALUE                                          (19999U)
 
 
 
@@ -204,6 +209,21 @@ extern "C" {
 /* Defines for AIN_2: GPIOA.17 with pinCMx 39 on package pin 10 */
 #define MOTOR_AIN_2_PIN                                         (DL_GPIO_PIN_17)
 #define MOTOR_AIN_2_IOMUX                                        (IOMUX_PINCM39)
+/* Port definition for Pin Group KEY */
+#define KEY_PORT                                                         (GPIOA)
+
+/* Defines for K0: GPIOA.24 with pinCMx 54 on package pin 25 */
+#define KEY_K0_PIN                                              (DL_GPIO_PIN_24)
+#define KEY_K0_IOMUX                                             (IOMUX_PINCM54)
+/* Defines for K1: GPIOA.25 with pinCMx 55 on package pin 26 */
+#define KEY_K1_PIN                                              (DL_GPIO_PIN_25)
+#define KEY_K1_IOMUX                                             (IOMUX_PINCM55)
+/* Defines for K2: GPIOA.26 with pinCMx 59 on package pin 30 */
+#define KEY_K2_PIN                                              (DL_GPIO_PIN_26)
+#define KEY_K2_IOMUX                                             (IOMUX_PINCM59)
+/* Defines for K3: GPIOA.27 with pinCMx 60 on package pin 31 */
+#define KEY_K3_PIN                                              (DL_GPIO_PIN_27)
+#define KEY_K3_IOMUX                                             (IOMUX_PINCM60)
 
 
 /* clang-format on */
@@ -215,6 +235,7 @@ void SYSCFG_DL_SYSCTL_init(void);
 void SYSCFG_DL_PWM_MOTOR_init(void);
 void SYSCFG_DL_QEI_0_init(void);
 void SYSCFG_DL_TIMER_0_init(void);
+void SYSCFG_DL_Button_init(void);
 void SYSCFG_DL_UART_0_init(void);
 void SYSCFG_DL_SPI_LCD_init(void);
 void SYSCFG_DL_ADC_voltage_init(void);

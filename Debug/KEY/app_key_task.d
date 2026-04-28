@@ -1,6 +1,7 @@
 # FIXED
 
-empty.o: ../empty.c ti_msp_dl_config.h \
+KEY/app_key_task.o: ../KEY/app_key_task.c ../KEY/app_key_task.h \
+ ti_msp_dl_config.h \
  D:/ti/mspm0_sdk_2_10_00_04/source/ti/devices/msp/msp.h \
  D:/ti/mspm0_sdk_2_10_00_04/source/ti/devices/DeviceFamily.h \
  D:/ti/mspm0_sdk_2_10_00_04/source/ti/devices/msp/m0p/mspm0g350x.h \
@@ -83,10 +84,8 @@ empty.o: ../empty.c ti_msp_dl_config.h \
  D:/ti/mspm0_sdk_2_10_00_04/source/ti/driverlib/dl_wwdt.h \
  D:/ti/mspm0_sdk_2_10_00_04/source/ti/driverlib/m0p/dl_interrupt.h \
  D:/ti/mspm0_sdk_2_10_00_04/source/ti/driverlib/m0p/dl_systick.h \
- D:/ti/empty/Board/board.h D:/ti/empty/LCD_init/lcd_init.h \
- D:/ti/empty/LCD_init/lcd.h D:/ti/empty/LCD_init/pic.h \
- D:/ti/empty/TB6612/tb6612.h D:/ti/empty/KEY/mid_button.h \
- D:/ti/empty/KEY/app_key_task.h D:/ti/empty/KEY/hw_key.h
+ ../KEY/mid_button.h
+../KEY/app_key_task.h:
 ti_msp_dl_config.h:
 D:/ti/mspm0_sdk_2_10_00_04/source/ti/devices/msp/msp.h:
 D:/ti/mspm0_sdk_2_10_00_04/source/ti/devices/DeviceFamily.h:
@@ -170,11 +169,4 @@ D:/ti/mspm0_sdk_2_10_00_04/source/ti/driverlib/dl_vref.h:
 D:/ti/mspm0_sdk_2_10_00_04/source/ti/driverlib/dl_wwdt.h:
 D:/ti/mspm0_sdk_2_10_00_04/source/ti/driverlib/m0p/dl_interrupt.h:
 D:/ti/mspm0_sdk_2_10_00_04/source/ti/driverlib/m0p/dl_systick.h:
-D:/ti/empty/Board/board.h:
-D:/ti/empty/LCD_init/lcd_init.h:
-D:/ti/empty/LCD_init/lcd.h:
-D:/ti/empty/LCD_init/pic.h:
-D:/ti/empty/TB6612/tb6612.h:
-D:/ti/empty/KEY/mid_button.h:
-D:/ti/empty/KEY/app_key_task.h:
-D:/ti/empty/KEY/hw_key.h:
+../KEY/mid_button.h:
