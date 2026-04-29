@@ -3,15 +3,15 @@
 
 void LCD_GPIO_Init(void)
 {
-    // 配置LCD控制引脚为数字输出
-    DL_GPIO_initDigitalOutput(LCD_RES_IOMUX);
-    DL_GPIO_initDigitalOutput(LCD_DC_IOMUX);
-    DL_GPIO_initDigitalOutput(LCD_CS_IOMUX);
-    DL_GPIO_initDigitalOutput(LCD_BLK_IOMUX);
+    // // 配置LCD控制引脚为数字输出
+    // DL_GPIO_initDigitalOutput(LCD_RES_IOMUX);
+    // DL_GPIO_initDigitalOutput(LCD_DC_IOMUX);
+    // DL_GPIO_initDigitalOutput(LCD_CS_IOMUX);
+    // DL_GPIO_initDigitalOutput(LCD_BLK_IOMUX);
 
-    // 初始状态：所有引脚置低
-    DL_GPIO_clearPins(LCD_PORT, LCD_RES_PIN | LCD_DC_PIN | LCD_CS_PIN | LCD_BLK_PIN);
-    DL_GPIO_enableOutput(LCD_PORT, LCD_RES_PIN | LCD_DC_PIN | LCD_CS_PIN | LCD_BLK_PIN);
+    // // 初始状态：所有引脚置低
+    // DL_GPIO_clearPins(LCD_PORT, LCD_RES_PIN | LCD_DC_PIN | LCD_CS_PIN | LCD_BLK_PIN);
+    // DL_GPIO_enableOutput(LCD_PORT, LCD_RES_PIN | LCD_DC_PIN | LCD_CS_PIN | LCD_BLK_PIN);
 }
 
 
